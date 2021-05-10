@@ -1,5 +1,6 @@
 package com.mocadev.querydsl;
 
+import static com.mocadev.querydsl.entity.QMember.member;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mocadev.querydsl.entity.Member;
@@ -65,12 +66,10 @@ public class QuerydslBasicTest {
 
 	@Test
 	public void querydslTest() {
-		QMember m = new QMember("m");
-
 		Member findMember = queryFactory
-			.select(m)
-			.from(m)
-			.where(m.username.eq("member1"))
+			.select(member)
+			.from(member)
+			.where(member.username.eq("member1"))
 			.fetchOne();
 
 		assertThat(findMember.getUsername()).isEqualTo("member1");
