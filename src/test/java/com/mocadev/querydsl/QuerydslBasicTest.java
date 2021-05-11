@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.mocadev.querydsl.entity.Member;
 import com.mocadev.querydsl.entity.QMember;
 import com.mocadev.querydsl.entity.Team;
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,6 +99,33 @@ public class QuerydslBasicTest {
 			.fetchOne();
 
 		assertThat(findMember.getUsername()).isEqualTo("member1");
+	}
+
+	@Test
+	void resultFetchTest() {
+//		List<Member> list = queryFactory
+//			.selectFrom(member)
+//			.fetch();
+//
+//		Member fetchOne = queryFactory
+//			.selectFrom(QMember.member)
+//			.fetchOne();
+//
+//		Member fetchFirst = queryFactory
+//			.selectFrom(QMember.member)
+//			.fetchFirst();
+
+		QueryResults<Member> results = queryFactory
+			.selectFrom(member)
+			.fetchResults();
+
+		List<Member> content = results.getResults();
+
+		for (Member mem : content) {
+			System.out.println("mem = " + mem);
+		}
+
+		assertThat(results.getTotal()).isEqualTo(4);
 	}
 
 }
