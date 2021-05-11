@@ -219,4 +219,30 @@ public class QuerydslBasicTest {
 		assertThat(teamB.get(member.age.avg())).isEqualTo(35);
 	}
 
+	@Test
+	void joinTest() {
+		List<Member> result = queryFactory
+			.selectFrom(member)
+			.join(member.team, team)
+			.where(team.name.eq("teamA"))
+			.fetch();
+
+		assertThat(result)
+			.extracting("username")
+			.containsExactly("member1", "member2");
+	}
+
+	@Test
+	void leftJoinTest() {
+		List<Member> result = queryFactory
+			.selectFrom(member)
+			.leftJoin(member.team, team)
+			.where(team.name.eq("teamA"))
+			.fetch();
+
+		assertThat(result)
+			.extracting("username")
+			.containsExactly("member1", "member2");
+	}
+
 }
