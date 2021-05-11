@@ -245,4 +245,22 @@ public class QuerydslBasicTest {
 			.containsExactly("member1", "member2");
 	}
 
+	@Test
+	void joinOnTest() {
+		List<Tuple> result = queryFactory
+			.select(member, team)
+			.from(member)
+			.leftJoin(member.team, team)
+			.on(team.name.eq("teamA"))
+			.fetch();
+
+		for (Tuple tuple : result) {
+			System.out.println("tuple = " + tuple);
+		}
+
+//		assertThat(result)
+//			.extracting("username")
+//			.containsExactly("member1", "member2");
+	}
+
 }
