@@ -1,19 +1,19 @@
 package com.mocadev.querydsl;
 
 import static com.mocadev.querydsl.entity.QMember.member;
-import static com.mocadev.querydsl.entity.QTeam.*;
+import static com.mocadev.querydsl.entity.QTeam.team;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mocadev.querydsl.entity.Member;
 import com.mocadev.querydsl.entity.QMember;
-import com.mocadev.querydsl.entity.QTeam;
 import com.mocadev.querydsl.entity.Team;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -257,10 +257,32 @@ public class QuerydslBasicTest {
 		for (Tuple tuple : result) {
 			System.out.println("tuple = " + tuple);
 		}
+	}
 
-//		assertThat(result)
-//			.extracting("username")
-//			.containsExactly("member1", "member2");
+	@PersistenceUnit
+	EntityManagerFactory emf;
+
+	@Test
+	void fetchJoinNoTest() {
+		Member member1 = queryFactory
+			.selectFrom(QMember.member)
+			.where(QMember.member.username.eq("member1"))
+			.fetchOne();
+
+		boolean loaded = emf.getPersistenceUnitUtil().isLoaded(member1.getTeam());
+		assertThat(loaded).as("페치 조인 미적용").isFalse();
+	}
+
+	@Test
+	void fetchJoinUseTest() {
+		Member member1 = queryFactory
+			.selectFrom(QMember.member)
+			.join(member.team, team).fetchJoin()
+			.where(QMember.member.username.eq("member1"))
+			.fetchOne();
+
+		boolean loaded = emf.getPersistenceUnitUtil().isLoaded(member1.getTeam());
+		assertThat(loaded).as("페치 조인 적용").isTrue();
 	}
 
 }
