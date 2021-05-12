@@ -5,12 +5,15 @@ import static com.mocadev.querydsl.entity.QTeam.team;
 import static com.querydsl.jpa.JPAExpressions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mocadev.querydsl.dto.MemberDto;
+import com.mocadev.querydsl.dto.UserDto;
 import com.mocadev.querydsl.entity.Member;
 import com.mocadev.querydsl.entity.QMember;
 import com.mocadev.querydsl.entity.Team;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -412,6 +415,54 @@ public class QuerydslBasicTest {
 		for (String s : result) {
 			System.out.println("s = " + s);
 		}
+	}
+
+	@Test
+	void findDtoBySetter() {
+		List<MemberDto> result = queryFactory
+			.select(Projections.bean(MemberDto.class,
+				member.username,
+				member.age))
+			.from(member)
+			.fetch();
+
+		result.stream().forEach(System.out::println);
+	}
+
+	@Test
+	void findDtoByField() {
+		List<MemberDto> result = queryFactory
+			.select(Projections.fields(MemberDto.class,
+				member.username,
+				member.age))
+			.from(member)
+			.fetch();
+
+		result.forEach(System.out::println);
+	}
+
+	@Test
+	void findDtoByConstructor() {
+		List<MemberDto> result = queryFactory
+			.select(Projections.constructor(MemberDto.class,
+				member.username,
+				member.age))
+			.from(member)
+			.fetch();
+
+		result.forEach(System.out::println);
+	}
+
+	@Test
+	void findUserDtoByField() {
+		List<UserDto> result = queryFactory
+			.select(Projections.fields(UserDto.class,
+				member.username.as("name"),
+				member.age))
+			.from(member)
+			.fetch();
+
+		result.forEach(System.out::println);
 	}
 
 }
