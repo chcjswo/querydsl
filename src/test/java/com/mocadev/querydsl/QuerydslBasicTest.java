@@ -6,6 +6,7 @@ import static com.querydsl.jpa.JPAExpressions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mocadev.querydsl.dto.MemberDto;
+import com.mocadev.querydsl.dto.QMemberDto;
 import com.mocadev.querydsl.dto.UserDto;
 import com.mocadev.querydsl.entity.Member;
 import com.mocadev.querydsl.entity.QMember;
@@ -459,6 +460,16 @@ public class QuerydslBasicTest {
 			.select(Projections.fields(UserDto.class,
 				member.username.as("name"),
 				member.age))
+			.from(member)
+			.fetch();
+
+		result.forEach(System.out::println);
+	}
+
+	@Test
+	void findDtoByQueryProjectionsTest() {
+		List<MemberDto> result = queryFactory
+			.select(new QMemberDto(member.username, member.age))
 			.from(member)
 			.fetch();
 
