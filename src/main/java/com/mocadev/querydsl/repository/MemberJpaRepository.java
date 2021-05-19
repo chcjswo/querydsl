@@ -1,15 +1,22 @@
 package com.mocadev.querydsl.repository;
 
 import static com.mocadev.querydsl.entity.QMember.member;
+import static com.mocadev.querydsl.entity.QTeam.team;
+import static org.springframework.util.StringUtils.*;
 
+import com.mocadev.querydsl.dto.MemberSearchCondition;
+import com.mocadev.querydsl.dto.MemberTeamDto;
+import com.mocadev.querydsl.dto.QMemberTeamDto;
 import com.mocadev.querydsl.entity.Member;
 import com.mocadev.querydsl.entity.QMember;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 /**
  * @author chcjswo
@@ -59,6 +66,36 @@ public class MemberJpaRepository {
 		return queryFactory
 			.selectFrom(member)
 			.where(member.username.eq(username))
+			.fetch();
+	}
+
+	public List<MemberTeamDto> searchByBuilder(MemberSearchCondition condition) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+		if (hasText(condition.getUsername())) {
+			builder.and(member.username.eq(condition.getUsername()));
+		}
+		if (hasText(condition.getTeamName())) {
+			builder.and(team.name.eq(condition.getTeamName()));
+		}
+		if (condition.getAgeGoe() != null) {
+			builder.and(member.age.goe(condition.getAgeGoe()));
+		}
+		if (condition.getAgeLoe() != null) {
+			builder.and(member.age.loe(condition.getAgeLoe()));
+		}
+
+		return queryFactory
+			.select(new QMemberTeamDto(
+				member.id.as("memberId"),
+				member.username,
+				member.age,
+				team.id.as("teamId"),
+				team.name.as("teamName")
+			))
+			.from(member)
+			.leftJoin(member.team, team)
+			.where(builder)
 			.fetch();
 	}
 
