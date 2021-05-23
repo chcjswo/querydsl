@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @github http://github.com/chcjswo
  * @since 2021-05-24
  **/
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
 
 	List<Member> findByUsername(String username);
 
