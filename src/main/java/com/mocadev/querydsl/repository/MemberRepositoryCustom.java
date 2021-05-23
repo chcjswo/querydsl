@@ -3,6 +3,8 @@ package com.mocadev.querydsl.repository;
 import com.mocadev.querydsl.dto.MemberSearchCondition;
 import com.mocadev.querydsl.dto.MemberTeamDto;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author chcjswo
@@ -14,5 +16,7 @@ import java.util.List;
 public interface MemberRepositoryCustom {
 
 	List<MemberTeamDto> searchByWhere(MemberSearchCondition condition);
+	Page<MemberTeamDto> searchPageSimple(MemberSearchCondition condition, Pageable pageable);
+	Page<MemberTeamDto> searchPageComplex(MemberSearchCondition condition, Pageable pageable);
 
 }
